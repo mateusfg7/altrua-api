@@ -80,8 +80,8 @@ A API estará disponível em: `http://localhost:8080`
 
 Configure as seguintes variáveis no seu `application.properties` ou via `.env`:
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/conectaong
-spring.datasource.username=seu_usuario
+spring.datasource.url=jdbc:postgresql://localhost:5432/mydatabase
+spring.datasource.username=myuser
 spring.datasource.password=sua_senha
 spring.jpa.hibernate.ddl-auto=update
 ```
