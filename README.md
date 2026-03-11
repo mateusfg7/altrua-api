@@ -108,20 +108,11 @@ altrua/
 
 ---
 
-## 🔌 Principais endpoints
+## 🔌 API REST
 
-| Método | Endpoint                        | Descrição                        |
-|--------|---------------------------------|----------------------------------|
-| POST   | `/api/ongs`                     | Cadastrar ONG                    |
-| GET    | `/api/ongs`                     | Listar todas as ONGs             |
-| GET    | `/api/ongs/{id}`                | Buscar ONG por ID                |
-| POST   | `/api/ongs/{id}/eventos`        | Criar evento para uma ONG        |
-| GET    | `/api/eventos`                  | Listar todos os eventos          |
-| GET    | `/api/eventos/{id}`             | Buscar evento por ID             |
-| POST   | `/api/eventos/{id}/voluntarios` | Inscrever voluntário em evento   |
-| GET    | `/api/eventos/{id}/doacoes`     | Informações de doação do evento  |
-| POST   | `/api/usuarios`                 | Cadastrar usuário                |
+A API REST do projeto ainda está em desenvolvimento. Assim que os controllers forem implementados em `src/main/java`, a documentação detalhada dos endpoints (métodos, URLs e descrições) será adicionada aqui para refletir fielmente o código-fonte.
 
+> Observação: os endpoints planejados podem sofrer alterações até a consolidação da primeira versão estável da API.
 ---
 
 ## 🐳 docker-compose.yml (exemplo)
