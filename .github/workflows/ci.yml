@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: altrua_test
+          POSTGRES_USER: altrua
+          POSTGRES_PASSWORD: altrua
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U altrua"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # Match the property keys Spring actually reads — your application.properties
+      # uses spring.datasource.url, not SPRING_DATASOURCE_URL, so these must align.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/altrua_test
+      SPRING_DATASOURCE_USERNAME: altrua
+      SPRING_DATASOURCE_PASSWORD: altrua
+      # Tell Spring Boot not to try to launch docker-compose in CI
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          # Let setup-java manage the Maven cache — it's tighter than actions/cache
+          # because it also restores on partial key matches automatically.
+          cache: "maven"
+
+      - name: Make mvnw executable
+        run: chmod +x ./mvnw
+
+      # Compile only — catches broken imports/missing symbols before wasting time on tests
+      - name: Build (compile only)
+        run: ./mvnw clean package -DskipTests -B
+
+      # -B = batch/non-interactive mode; cleaner output in CI logs
+      - name: Run tests
+        run: ./mvnw test -B
+
+      # Always upload reports so failures are diagnosable even when the step is red
+      - name: Upload Surefire test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+          retention-days: 7
+
+      # Upload the built JAR so it can be deployed or inspected without re-building
+      - name: Upload application JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: altrua-jar
+          path: target/*.jar
+          # Short retention — this is a snapshot build, not a release artifact
+          retention-days: 3
