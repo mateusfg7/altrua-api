@@ -22,7 +22,7 @@ import lombok.Getter;
  * </p>
  */
 @Entity
-@Table(name = "user")
+@Table(name = "tb_user")
 public class User {
 
   /** Identificador único do usuário, gerado automaticamente como UUID. */
