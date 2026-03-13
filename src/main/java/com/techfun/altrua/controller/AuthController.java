@@ -13,6 +13,10 @@ import com.techfun.altrua.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Controlador REST responsável pelos endpoints de autenticação.
+ * Disponibiliza rotas para registro e operações relacionadas a acesso.
+ */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -20,6 +24,11 @@ public class AuthController {
     
     private final AuthService authService;
 
+    /**
+     * Endpoint para registro de novos usuários.
+     *
+     * @param dto dados do usuário a ser registrado, validados automaticamente
+     */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void register(@RequestBody @Valid RegisterRequestDTO dto) {

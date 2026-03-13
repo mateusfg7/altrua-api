@@ -9,10 +9,26 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Classe de configuração de segurança do Spring Security.
+ * Define as regras de autorização, filtros e codificação de senhas.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Configura a cadeia de filtros de segurança (Security Filter Chain).
+     *
+     * <p>
+     * Desabilita CSRF, define a política de sessão como STATELESS e configura
+     * as permissões de acesso aos endpoints (Swagger e API docs públicos).
+     * </p>
+     *
+     * @param http o objeto {@link HttpSecurity} para configuração
+     * @return a cadeia de filtros configurada
+     * @throws Exception em caso de erro na configuração
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -29,6 +45,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Define o encoder de senhas da aplicação.
+     *
+     * <p>
+     * Utiliza o algoritmo Argon2, recomendado para armazenamento seguro de senhas.
+     * </p>
+     *
+     * @return instância configurada de {@link Argon2PasswordEncoder}
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new Argon2PasswordEncoder(
