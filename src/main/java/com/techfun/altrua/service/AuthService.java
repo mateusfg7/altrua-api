@@ -8,6 +8,7 @@ import com.techfun.altrua.entities.User;
 import com.techfun.altrua.exceptions.EmailAlreadyInUseException;
 import com.techfun.altrua.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -32,6 +33,7 @@ public class AuthService {
      * @param dto objeto contendo os dados do registro (nome, e-mail e senha)
      * @throws EmailAlreadyInUseException se o e-mail informado já estiver cadastrado
      */
+    @Transactional
     public void register(RegisterRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new EmailAlreadyInUseException(dto.getEmail());
