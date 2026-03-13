@@ -1,13 +1,14 @@
 package com.techfun.altrua.exceptions.handler;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.techfun.altrua.dto.ErrorResponseDTO;
 import com.techfun.altrua.exceptions.EmailAlreadyInUseException;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Manipulador global de exceções para a API.
@@ -24,12 +25,13 @@ public class GlobalExceptionHandler {
      * Trata a exceção {@link EmailAlreadyInUseException}.
      *
      * @param ex a exceção capturada
-     * @return um mapa contendo a mensagem de erro
+     * @param request a requisição HTTP onde a exceção ocorreu
+     * @return um objeto {@link ErrorResponseDTO} contendo os detalhes do erro
      * @see HttpStatus#CONFLICT
      */
     @ExceptionHandler(EmailAlreadyInUseException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleEmailAlreadyInUser(EmailAlreadyInUseException ex) {
-        return Map.of("error", ex.getMessage());
+    public ErrorResponseDTO handleEmailAlreadyInUser(EmailAlreadyInUseException ex, HttpServletRequest request) {
+        return ErrorResponseDTO.of(ex.getMessage(), HttpStatus.CONFLICT, request.getRequestURI());
     }
 }
