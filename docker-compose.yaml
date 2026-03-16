@@ -1,3 +1,6 @@
+volumes:
+  altrua_pg_data:
+
 services:
   postgres:
     image: 'postgres:18-alpine'
@@ -5,5 +8,7 @@ services:
       - 'POSTGRES_DB=${DB_NAME}'
       - 'POSTGRES_PASSWORD=${DB_PASSWORD}'
       - 'POSTGRES_USER=${DB_USER}'
+    volumes:
+      - altrua_pg_data:/var/lib/postgresql/data
     ports:
       - '5432:5432'
