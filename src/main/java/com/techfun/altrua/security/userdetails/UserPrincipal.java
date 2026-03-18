@@ -15,7 +15,8 @@ import lombok.RequiredArgsConstructor;
  * Implementação de {@link UserDetails} para integração com o Spring Security.
  * 
  * <p>
- * Envolve a entidade {@link User} e adapta seus dados para os contratos de autenticação
+ * Envolve a entidade {@link User} e adapta seus dados para os contratos de
+ * autenticação
  * e autorização do framework.
  * </p>
  */
@@ -35,13 +36,16 @@ public class UserPrincipal implements UserDetails {
     }
 
     /**
-     * Retorna o nome de usuário utilizado para autenticação.
-     * 
+     * Retorna o identificador único do usuário (UUID) utilizado como subject do
+     * JWT.
+     *
      * <p>
-     * Neste caso, retorna o ID do usuário convertido para String.
+     * Embora o método se chame {@code getUsername} por contrato da interface
+     * {@link UserDetails}, nesta implementação retorna o ID do usuário para
+     * garantir imutabilidade do subject do token.
      * </p>
      *
-     * @return ID do usuário
+     * @return UUID do usuário convertido para String
      */
     @Override
     public String getUsername() {
