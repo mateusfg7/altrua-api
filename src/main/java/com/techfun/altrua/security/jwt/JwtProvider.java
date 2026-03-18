@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.crypto.SecretKey;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Componente responsável pela geração de tokens JWT.
@@ -27,13 +24,12 @@ import io.jsonwebtoken.security.Keys;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class JwtProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
-    /** Chave secreta utilizada para assinar os tokens. Definida no arquivo de propriedades. */
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final JwtKeyProvider jwtKeyProvider;
 
     /** Tempo de expiração do token em milissegundos. Definido no arquivo de propriedades. */
     @Value("${jwt.expiration}")
@@ -43,7 +39,8 @@ public class JwtProvider {
      * Gera um token JWT para um usuário autenticado.
      *
      * <p>
-     * Inclui as roles (autoridades) do usuário no payload do token.
+     * Define o ID do usuário como "subject" e inclui as roles (autoridades)
+     * no payload (claims) do token.
      * </p>
      *
      * @param userDetails os detalhes do usuário para o qual o token será gerado
@@ -75,21 +72,7 @@ public class JwtProvider {
                 .claims(claims)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSigningKey(), Jwts.SIG.HS256)
+                .signWith(jwtKeyProvider.getSigningKey(), Jwts.SIG.HS256)
                 .compact();
-    }
-
-    /**
-     * Recupera a chave de assinatura criptográfica.
-     *
-     * <p>
-     * Decodifica a string Base64 da configuração para gerar a chave HMAC-SHA.
-     * </p>
-     *
-     * @return chave secreta para assinatura
-     */
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

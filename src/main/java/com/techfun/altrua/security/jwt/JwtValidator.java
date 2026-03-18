@@ -3,18 +3,14 @@ package com.techfun.altrua.security.jwt;
 import java.util.Date;
 import java.util.function.Function;
 
-import javax.crypto.SecretKey;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Componente responsável pela validação de tokens JWT.
@@ -25,19 +21,18 @@ import io.jsonwebtoken.security.Keys;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class JwtValidator {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtValidator.class);
 
-    /** Chave secreta utilizada para validar a assinatura dos tokens. */
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final JwtKeyProvider jwtKeyProvider;
 
     /**
      * Valida se o token pertence ao usuário informado e se não está expirado.
      *
      * <p>
-     * Compara o "subject" do token (geralmente o ID ou e-mail) com o username do {@link UserDetails}.
+     * Compara o "subject" do token (nesta aplicação, o ID do usuário) com o username do {@link UserDetails}.
      * </p>
      *
      * @param token       o token JWT a ser validado
@@ -106,19 +101,9 @@ public class JwtValidator {
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(jwtKeyProvider.getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    /**
-     * Decodifica a chave secreta configurada para uso na verificação de assinatura.
-     *
-     * @return chave secreta HMAC-SHA
-     */
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
