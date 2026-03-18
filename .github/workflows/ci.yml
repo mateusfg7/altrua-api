@@ -33,6 +33,10 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       SPRING_DOCKER_COMPOSE_ENABLED: "false"
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -43,6 +47,7 @@ jobs:
           java-version: "21"
           distribution: "temurin"
           cache: "maven"
+          cache-dependency-path: backend/pom.xml
 
       - name: Make mvnw executable
         run: chmod +x ./mvnw
@@ -58,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: surefire-reports
-          path: target/surefire-reports/
+          path: backend/target/surefire-reports/
           retention-days: 7
 
       - name: Upload application JAR
@@ -66,5 +71,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: altrua-jar
-          path: target/*.jar
+          path: backend/target/*.jar
           retention-days: 3
