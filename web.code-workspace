@@ -1,0 +1,17 @@
+{
+  "folders": [
+    { "name": "🌎 web", "path": "./web" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    
+    "cSpell.words": [
+      "Altrua",
+      "gerenciados",
+      "registra",
+      "registro",
+      "respectivamente",
+      "techfun"
+    ]
+  }
+}

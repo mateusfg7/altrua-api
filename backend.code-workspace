@@ -1,0 +1,20 @@
+{
+  "folders": [
+    { "name": "🌐 backend", "path": "./backend" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    
+    "java.import.maven.enabled": true,
+    "java.compile.nullAnalysis.mode": "automatic",
+    
+    "cSpell.words": [
+      "Altrua",
+      "gerenciados",
+      "registra",
+      "registro",
+      "respectivamente",
+      "techfun"
+    ]
+  }
+}
