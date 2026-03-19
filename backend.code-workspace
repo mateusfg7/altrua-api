@@ -1,8 +1,6 @@
 {
   "folders": [
-    { "name": "🌐 backend", "path": "./backend" },
-    { "name": "🌎 web", "path": "./web" },
-    { "name": "⚙️ root", "path": "." }
+    { "name": "🌐 backend", "path": "./backend" }
   ],
   "settings": {
     "editor.formatOnSave": true,
