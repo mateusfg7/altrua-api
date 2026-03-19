@@ -1,5 +1,6 @@
 package com.techfun.altrua.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -37,13 +38,18 @@ public class AuthService {
      *
      * <p>
      * Verifica se o e-mail já está em uso antes de criar o usuário.
-     * A senha fornecida é criptografada antes de ser salva.
+     * A senha fornecida é criptografada antes de ser persistida.
+     * Caso haja violação de integridade no banco (race condition), a exceção
+     * é tratada e convertida para {@link EmailAlreadyInUseException}.
      * </p>
      *
      * @param dto objeto contendo os dados do registro (nome, e-mail e senha)
-     * @return objeto contendo o token JWT gerado para o novo usuário
+     * @return {@link AuthResponseDTO} contendo o token JWT gerado para o novo
+     *         usuário
      * @throws EmailAlreadyInUseException se o e-mail informado já estiver
-     *                                    cadastrado
+     *                                    cadastrado ou ocorrer violação de
+     *                                    integridade no
+     *                                    banco
      */
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO dto) {
@@ -51,17 +57,19 @@ public class AuthService {
             throw new EmailAlreadyInUseException();
         }
 
-        // TO DO: Criar tratamento para evitar condições de corrida (duas requisições ao
-        // mesmo tempo)
-        User user = User.create(
-                dto.getName(),
-                dto.getEmail(),
-                passwordEncoder.encode(dto.getPassword()));
+        try {
+            User user = User.create(
+                    dto.getName(),
+                    dto.getEmail(),
+                    passwordEncoder.encode(dto.getPassword()));
 
-        userRepository.save(user);
+            userRepository.save(user);
 
-        String token = jwtProvider.generateToken(new UserPrincipal(user));
-        return new AuthResponseDTO(token);
+            String token = jwtProvider.generateToken(new UserPrincipal(user));
+            return new AuthResponseDTO(token);
+        } catch (DataIntegrityViolationException ex) {
+            throw new EmailAlreadyInUseException();
+        }
     }
 
     /**
