@@ -1,12 +1,17 @@
 package com.techfun.altrua.service;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.techfun.altrua.dto.auth.AuthResponseDTO;
+import com.techfun.altrua.dto.auth.LoginRequestDTO;
 import com.techfun.altrua.dto.auth.RegisterRequestDTO;
 import com.techfun.altrua.entities.User;
 import com.techfun.altrua.exceptions.EmailAlreadyInUseException;
+import com.techfun.altrua.exceptions.InvalidCredentialsException;
 import com.techfun.altrua.repository.UserRepository;
 import com.techfun.altrua.security.jwt.JwtProvider;
 import com.techfun.altrua.security.userdetails.UserPrincipal;
@@ -25,6 +30,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final AuthenticationManager authenticationManager;
 
     /**
      * Registra um novo usuário no sistema.
@@ -36,7 +42,8 @@ public class AuthService {
      *
      * @param dto objeto contendo os dados do registro (nome, e-mail e senha)
      * @return objeto contendo o token JWT gerado para o novo usuário
-     * @throws EmailAlreadyInUseException se o e-mail informado já estiver cadastrado
+     * @throws EmailAlreadyInUseException se o e-mail informado já estiver
+     *                                    cadastrado
      */
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO dto) {
@@ -57,4 +64,36 @@ public class AuthService {
         return new AuthResponseDTO(token);
     }
 
+    /**
+     * Realiza a autenticação do usuário com base nas credenciais fornecidas.
+     *
+     * <p>
+     * Utiliza o {@link AuthenticationManager} para validar e-mail e senha.
+     * Em caso de sucesso, gera e retorna um token JWT encapsulado em
+     * {@link AuthResponseDTO}.
+     * </p>
+     *
+     * @param dto objeto contendo as credenciais de acesso (e-mail e senha)
+     * @return {@link AuthResponseDTO} contendo o token JWT gerado
+     * @throws AuthenticationException     se a autenticação falhar por credenciais
+     *                                     inválidas ou usuário inexistente
+     * @throws InvalidCredentialsException se ocorrer qualquer outro erro inesperado
+     *                                     durante o processo de autenticação
+     */
+    public AuthResponseDTO login(LoginRequestDTO dto) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
+
+            User user = userRepository.findByEmail(dto.getEmail())
+                    .orElseThrow();
+
+            String token = jwtProvider.generateToken(new UserPrincipal(user));
+            return new AuthResponseDTO(token);
+        } catch (AuthenticationException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new InvalidCredentialsException();
+        }
+    }
 }
