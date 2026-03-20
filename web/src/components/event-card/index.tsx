@@ -47,7 +47,7 @@ export function EventCard({
           {/** biome-ignore lint/correctness/useImageSize: Image comes from external source */}
           <img
             alt={title}
-            className="h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
             src={imageUrl}
           />
           <div className="absolute top-3 left-3 flex gap-2">
