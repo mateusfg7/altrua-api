@@ -6,9 +6,9 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Header } from "~/components/header";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
-
 import appCss from "../styles.css?url";
 
 interface MyRouterContext {
@@ -47,6 +47,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="wrap-anywhere font-sans antialiased">
         <TanStackQueryProvider>
+          <Header />
+
           {children}
 
           <TanStackDevtools
