@@ -38,30 +38,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Trata a exceção {@link BadCredentialsException} lançada pelo Spring Security.
+     * Trata as exceções {@link BadCredentialsException} e
+     * {@link InvalidCredentialsException} relacionadas a credenciais inválidas.
      *
      * @param ex      a exceção capturada
      * @param request a requisição HTTP onde a exceção ocorreu
      * @return um objeto {@link ErrorResponseDTO} com status 401 (Unauthorized) e
      *         mensagem genérica
      */
-    @ExceptionHandler(BadCredentialsException.class)
+    @ExceptionHandler({ BadCredentialsException.class, InvalidCredentialsException.class })
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponseDTO handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
-        return ErrorResponseDTO.of("Credenciais inválidas", HttpStatus.UNAUTHORIZED, request.getRequestURI());
-    }
-
-    /**
-     * Trata a exceção personalizada {@link InvalidCredentialsException}.
-     *
-     * @param ex      a exceção capturada
-     * @param request a requisição HTTP onde a exceção ocorreu
-     * @return um objeto {@link ErrorResponseDTO} com status 401 (Unauthorized)
-     * @see HttpStatus#UNAUTHORIZED
-     */
-    @ExceptionHandler(InvalidCredentialsException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponseDTO handleInvalidCredentials(InvalidCredentialsException ex, HttpServletRequest request) {
         return ErrorResponseDTO.of("Credenciais inválidas", HttpStatus.UNAUTHORIZED, request.getRequestURI());
     }
 }
