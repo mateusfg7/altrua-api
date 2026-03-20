@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CtaSection } from "~/components/cta-section";
 import { EventsSection } from "~/components/event-section";
 import { HeroSection } from "~/components/hero-section";
 import { HowItWorksSection } from "~/components/how-it-works-section";
@@ -13,6 +14,7 @@ function App() {
       <OngSection />
       <EventsSection />
       <HowItWorksSection />
+      <CtaSection />
     </div>
   );
 }
