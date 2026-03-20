@@ -28,7 +28,7 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 border-muted border-b bg-background/95 p-3 backdrop-blur-md supports-backdrop-filter:bg-background/60">
+    <header className="sticky top-0 z-40 border-muted border-b bg-background/95 p-3 backdrop-blur-xl supports-backdrop-filter:bg-background/70">
       <div className="mx-auto flex max-w-6xl grid-cols-4 items-center justify-between gap-1 md:grid">
         <Link className="flex items-center gap-2" to="/">
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary">
