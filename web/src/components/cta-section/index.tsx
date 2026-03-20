@@ -1,5 +1,3 @@
-// import { ArrowRight01Icon, Building03Icon, UserIcon } from "hugeicons-react";
-
 import {
   ArrowRight01Icon,
   Building03Icon,
