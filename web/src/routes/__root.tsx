@@ -50,7 +50,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           <div className="flex min-h-dvh flex-col gap-20">
             <Header />
             <main className="flex-1">{children}</main>
-            <footer />
+            <footer>footer</footer>
           </div>
 
           <TanStackDevtools
