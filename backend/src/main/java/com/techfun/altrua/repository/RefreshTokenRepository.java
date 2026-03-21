@@ -4,8 +4,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 
 import com.techfun.altrua.entities.RefreshToken;
+
+import jakarta.persistence.LockModeType;
 
 /**
  * Repositório para operações de persistência da entidade {@link RefreshToken}.
@@ -13,12 +16,19 @@ import com.techfun.altrua.entities.RefreshToken;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, UUID> {
 
     /**
-     * Busca um refresh token pelo seu valor.
+     * Busca um refresh token pelo seu valor aplicando lock pessimista.
+     *
+     * <p>
+     * Utiliza {@link LockModeType#PESSIMISTIC_WRITE} para garantir exclusividade
+     * durante operações de escrita concorrentes, como rotação e revogação de
+     * tokens.
+     * </p>
      *
      * @param token o valor do refresh token a ser localizado
      * @return um {@link Optional} contendo o token encontrado, ou vazio se não
      *         existir
      */
-    public Optional<RefreshToken> findByToken(String token);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<RefreshToken> findByToken(String token);
 
 }
