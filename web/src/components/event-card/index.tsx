@@ -35,10 +35,10 @@ export function EventCard({
   hasVolunteering,
   hasDonation,
 }: EventCardProps) {
-  const progress = Math.min(
-    (volunteersRegistered / volunteersNeeded) * 100,
-    100
-  );
+  const progress =
+    volunteersNeeded > 0
+      ? Math.min((volunteersRegistered / volunteersNeeded) * 100, 100)
+      : 0;
 
   return (
     <Card className="group overflow-hidden p-0 transition-all">
