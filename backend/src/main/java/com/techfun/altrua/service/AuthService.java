@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import com.techfun.altrua.dto.auth.AuthResponseDTO;
 import com.techfun.altrua.dto.auth.LoginRequestDTO;
 import com.techfun.altrua.dto.auth.RegisterRequestDTO;
-import com.techfun.altrua.entities.RefreshToken;
 import com.techfun.altrua.entities.User;
 import com.techfun.altrua.exceptions.EmailAlreadyInUseException;
 import com.techfun.altrua.exceptions.InvalidCredentialsException;
+import com.techfun.altrua.exceptions.RefreshTokenException;
 import com.techfun.altrua.repository.UserRepository;
 import com.techfun.altrua.security.jwt.JwtProvider;
 import com.techfun.altrua.security.userdetails.UserPrincipal;
@@ -57,6 +57,8 @@ public class AuthService {
      *         gerados
      * @throws EmailAlreadyInUseException se o e-mail informado já estiver
      *                                    cadastrado
+     * @throws RefreshTokenException      se houver erro ao gerar ou persistir o
+     *                                    refresh token
      */
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO dto) {
@@ -73,9 +75,9 @@ public class AuthService {
             userRepository.save(user);
 
             String token = jwtProvider.generateToken(new UserPrincipal(user));
-            RefreshToken refreshToken = refreshTokenService.create(user);
+            String refreshToken = refreshTokenService.create(user);
 
-            return new AuthResponseDTO(token, refreshToken.getToken());
+            return new AuthResponseDTO(token, refreshToken);
         } catch (DataIntegrityViolationException ex) {
             throw new EmailAlreadyInUseException();
         }
@@ -95,6 +97,8 @@ public class AuthService {
      *         gerados
      * @throws InvalidCredentialsException se a autenticação falhar por credenciais
      *                                     inválidas
+     * @throws RefreshTokenException       se houver erro ao gerar ou persistir o
+     *                                     refresh token
      */
     @Transactional
     public AuthResponseDTO login(LoginRequestDTO dto) {
@@ -104,9 +108,9 @@ public class AuthService {
 
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             String token = jwtProvider.generateToken(userPrincipal);
-            RefreshToken refreshToken = refreshTokenService.create(userPrincipal.getUser());
+            String refreshToken = refreshTokenService.create(userPrincipal.getUser());
 
-            return new AuthResponseDTO(token, refreshToken.getToken());
+            return new AuthResponseDTO(token, refreshToken);
         } catch (AuthenticationException ex) {
             throw new InvalidCredentialsException();
         }
@@ -117,7 +121,8 @@ public class AuthService {
      *
      * <p>
      * O refresh token atual é rotacionado — invalidado e substituído por um novo.
-     * O cliente deve armazenar ambos os tokens retornados.
+     * O cliente deve armazenar ambos os tokens retornados para as próximas
+     * requisições.
      * </p>
      *
      * @param token o refresh token a ser utilizado na renovação
@@ -127,12 +132,9 @@ public class AuthService {
      */
     @Transactional
     public AuthResponseDTO refresh(String token) {
-        RefreshToken refreshToken = refreshTokenService.rotate(token);
-
-        UserPrincipal userPrincipal = new UserPrincipal(refreshToken.getUser());
-        String newToken = jwtProvider.generateToken(userPrincipal);
-
-        return new AuthResponseDTO(newToken, refreshToken.getToken());
+        RotateResult current = refreshTokenService.rotate(token);
+        String newAccessToken = jwtProvider.generateToken(new UserPrincipal(current.user()));
+        return new AuthResponseDTO(newAccessToken, current.newToken());
     }
 
     /**
