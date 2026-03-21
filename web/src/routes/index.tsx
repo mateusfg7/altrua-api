@@ -1,11 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { CtaSection } from "~/components/cta-section";
+import { EventsSection } from "~/components/event-section";
+import { HeroSection } from "~/components/hero-section";
+import { HowItWorksSection } from "~/components/how-it-works-section";
+import { OngSection } from "~/components/ong-section";
 
 export const Route = createFileRoute("/")({ component: App });
 
 function App() {
   return (
-    <div>
-      <h1>Altrua</h1>
+    <div className="space-y-20">
+      <HeroSection />
+      <OngSection />
+      <EventsSection />
+      <HowItWorksSection />
+      <CtaSection />
     </div>
   );
 }
