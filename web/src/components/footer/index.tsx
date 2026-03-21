@@ -64,14 +64,14 @@ export function Footer() {
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
-                <Link
+                <a
                   aria-label={social.label}
                   className="flex size-10 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                  href={social.href}
                   key={social.label}
-                  to={social.href}
                 >
                   <HugeiconsIcon className="size-5" icon={social.icon} />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
