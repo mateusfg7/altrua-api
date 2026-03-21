@@ -1,4 +1,3 @@
-// import { ArrowRight01Icon, FilterIcon } from "hugeicons-react";
 
 import { ArrowRight01Icon, FilterIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
