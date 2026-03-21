@@ -43,7 +43,7 @@ public class RefreshToken {
     private UUID id;
 
     /** Valor do refresh token JWT. Deve ser único no sistema. */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 64)
     @Setter(AccessLevel.NONE)
     private String token;
 
