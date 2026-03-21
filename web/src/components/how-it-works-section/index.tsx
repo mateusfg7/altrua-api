@@ -1,10 +1,3 @@
-// import {
-//   Calendar03Icon,
-//   FavouriteIcon,
-//   Search01Icon,
-//   UserAdd01Icon,
-// } from "hugeicons-react";
-
 import {
   Calendar03Icon,
   FavouriteIcon,
