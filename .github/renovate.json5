@@ -17,6 +17,7 @@
     {
       matchUpdateTypes: ['minor'],
       addLabels: ['deps:minor'],
+      automerge: true,
     },
     {
       matchUpdateTypes: ['patch'],
@@ -26,6 +27,7 @@
     {
       matchUpdateTypes: ['pin'],
       addLabels: ['deps:pin'],
+      automerge: true,
     },
   ],
 }
