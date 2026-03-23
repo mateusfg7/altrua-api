@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.techfun.altrua.dto.common.ErrorResponseDTO;
 import com.techfun.altrua.exceptions.EmailAlreadyInUseException;
 import com.techfun.altrua.exceptions.InvalidCredentialsException;
+import com.techfun.altrua.exceptions.RefreshTokenException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -28,8 +29,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      a exceção capturada
      * @param request a requisição HTTP onde a exceção ocorreu
-     * @return um objeto {@link ErrorResponseDTO} contendo os detalhes do erro
-     * @see HttpStatus#CONFLICT
+     * @return {@link ErrorResponseDTO} com status 409 e mensagem de conflito
      */
     @ExceptionHandler(EmailAlreadyInUseException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -38,17 +38,38 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Trata as exceções {@link BadCredentialsException} e
-     * {@link InvalidCredentialsException} relacionadas a credenciais inválidas.
+     * Trata exceções de credenciais inválidas no processo de autenticação.
+     *
+     * <p>
+     * Retorna mensagem genérica para não revelar se o erro foi no e-mail
+     * ou na senha, prevenindo ataques de enumeração de usuários.
+     * </p>
      *
      * @param ex      a exceção capturada
      * @param request a requisição HTTP onde a exceção ocorreu
-     * @return um objeto {@link ErrorResponseDTO} com status 401 (Unauthorized) e
-     *         mensagem genérica
+     * @return {@link ErrorResponseDTO} com status 401 e mensagem genérica
      */
     @ExceptionHandler({ BadCredentialsException.class, InvalidCredentialsException.class })
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponseDTO handleBadCredentials(BadCredentialsException ex, HttpServletRequest request) {
+    public ErrorResponseDTO handleBadCredentials(Exception ex, HttpServletRequest request) {
         return ErrorResponseDTO.of("Credenciais inválidas", HttpStatus.UNAUTHORIZED, request.getRequestURI());
+    }
+
+    /**
+     * Trata exceções relacionadas ao refresh token.
+     *
+     * <p>
+     * Cobre casos de token não encontrado, revogado ou expirado,
+     * retornando status 401 para que o cliente realize novo login.
+     * </p>
+     *
+     * @param ex      a exceção capturada
+     * @param request a requisição HTTP onde a exceção ocorreu
+     * @return {@link ErrorResponseDTO} com status 401 e descrição do erro
+     */
+    @ExceptionHandler(RefreshTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponseDTO handleRefreshTokenException(RefreshTokenException ex, HttpServletRequest request) {
+        return ErrorResponseDTO.of(ex.getMessage(), HttpStatus.UNAUTHORIZED, request.getRequestURI());
     }
 }
