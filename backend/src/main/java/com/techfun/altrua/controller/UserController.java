@@ -34,7 +34,7 @@ public class UserController {
      * evitando consulta adicional ao banco de dados.
      * </p>
      *
-     * @param userPrincipal o principal do usuário autenticado, extraído do {@link SecurityContext}
+     * @param userPrincipal o principal do usuário autenticado extraído do contexto de segurança
      * @return {@link ResponseEntity} contendo os dados do usuário sem a senha
      */
     @GetMapping("/me")
