@@ -12,7 +12,7 @@ import lombok.Getter;
  * validações.
  */
 @Getter
-public class RegisterRequestDTO {
+public class RegisterUserRequestDTO {
 
     /** E-mail do usuário. Deve ser válido e não pode estar em branco. */
     @NotBlank

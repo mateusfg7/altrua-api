@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techfun.altrua.auth.dto.AuthResponseDTO;
 import com.techfun.altrua.auth.dto.LoginRequestDTO;
 import com.techfun.altrua.auth.dto.RefreshTokenRequestDTO;
-import com.techfun.altrua.auth.dto.RegisterRequestDTO;
+import com.techfun.altrua.auth.dto.RegisterUserRequestDTO;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class AuthController {
      * @return {@link ResponseEntity} com status 201 e os tokens de autenticação
      */
     @PostMapping("/signin")
-    public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterRequestDTO dto) {
+    public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterUserRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(dto));
     }
 
