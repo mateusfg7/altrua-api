@@ -1,20 +1,24 @@
 package com.techfun.altrua.common.exceptions;
 
+import org.springframework.http.HttpStatus;
+
 /**
- * Exceção lançada quando as credenciais fornecidas (e-mail ou senha) são
- * inválidas.
- *
+ * Exceção lançada quando as credenciais de autenticação (e-mail ou senha)
+ * fornecidas pelo usuário são inválidas.
+ * 
  * <p>
- * Utilizada durante o processo de autenticação para indicar falha sem revelar
- * qual campo específico está incorreto, preservando a segurança da aplicação.
+ * Esta exceção encapsula o erro de autenticação e retorna o status
+ * {@link HttpStatus#UNAUTHORIZED} (401).
+ * Por razões de segurança, ela utiliza uma mensagem genérica para evitar
+ * a enumeração de usuários.
  * </p>
  */
-public class InvalidCredentialsException extends RuntimeException {
+public class InvalidCredentialsException extends BusinessException {
 
     /**
-     * Constrói a exceção com a mensagem padrão "Credenciais inválidas".
+     * Constrói uma nova exceção com mensagem e status HTTP 401 pré-definidos.
      */
     public InvalidCredentialsException() {
-        super("Credenciais inválidas");
+        super("Falha na autenticação", HttpStatus.UNAUTHORIZED);
     }
 }
