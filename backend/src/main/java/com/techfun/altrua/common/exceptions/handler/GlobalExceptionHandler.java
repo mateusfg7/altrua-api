@@ -35,6 +35,7 @@ import com.techfun.altrua.common.exceptions.InvalidCredentialsException;
  * Estrutura padrão da resposta:
  * <ul>
  * <li><b>status:</b> Código HTTP.</li>
+ * <li><b>instance:</b> URI da requisição.</li>
  * <li><b>title:</b> Resumo legível do tipo de erro.</li>
  * <li><b>detail:</b> Explicação específica do erro.</li>
  * <li><b>timestamp:</b> Instante exato da ocorrência.</li>
