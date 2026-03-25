@@ -1,4 +1,4 @@
-package com.techfun.altrua.service;
+package com.techfun.altrua.auth;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,16 +8,18 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.techfun.altrua.dto.auth.AuthResponseDTO;
-import com.techfun.altrua.dto.auth.LoginRequestDTO;
-import com.techfun.altrua.dto.auth.RegisterRequestDTO;
-import com.techfun.altrua.entities.User;
-import com.techfun.altrua.exceptions.EmailAlreadyInUseException;
-import com.techfun.altrua.exceptions.InvalidCredentialsException;
-import com.techfun.altrua.exceptions.RefreshTokenException;
-import com.techfun.altrua.repository.UserRepository;
+import com.techfun.altrua.auth.dto.AuthResponseDTO;
+import com.techfun.altrua.auth.dto.LoginRequestDTO;
+import com.techfun.altrua.auth.dto.RegisterUserRequestDTO;
+import com.techfun.altrua.auth.refresh.RefreshTokenService;
+import com.techfun.altrua.auth.refresh.RotateResult;
+import com.techfun.altrua.common.exceptions.DuplicateResourceException;
+import com.techfun.altrua.common.exceptions.InvalidCredentialsException;
+import com.techfun.altrua.common.exceptions.RefreshTokenException;
 import com.techfun.altrua.security.jwt.JwtProvider;
 import com.techfun.altrua.security.userdetails.UserPrincipal;
+import com.techfun.altrua.user.User;
+import com.techfun.altrua.user.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -49,21 +51,21 @@ public class AuthService {
      * Verifica se o e-mail já está em uso antes de criar o usuário.
      * A senha fornecida é criptografada antes de ser persistida.
      * Caso haja violação de integridade no banco (race condition), a exceção
-     * é tratada e convertida para {@link EmailAlreadyInUseException}.
+     * é tratada e convertida para {@link DuplicateResourceException}.
      * </p>
      *
      * @param dto objeto contendo os dados do registro (nome, e-mail e senha)
      * @return {@link AuthResponseDTO} contendo o access token e refresh token
      *         gerados
-     * @throws EmailAlreadyInUseException se o e-mail informado já estiver
+     * @throws DuplicateResourceException se o e-mail informado já estiver
      *                                    cadastrado
      * @throws RefreshTokenException      se houver erro ao gerar ou persistir o
      *                                    refresh token
      */
     @Transactional
-    public AuthResponseDTO register(RegisterRequestDTO dto) {
+    public AuthResponseDTO register(RegisterUserRequestDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new EmailAlreadyInUseException();
+            throw new DuplicateResourceException("E-mail já cadastrado");
         }
 
         try {
@@ -79,7 +81,7 @@ public class AuthService {
 
             return new AuthResponseDTO(token, refreshToken);
         } catch (DataIntegrityViolationException ex) {
-            throw new EmailAlreadyInUseException();
+            throw new DuplicateResourceException("E-mail já cadastrado");
         }
     }
 
