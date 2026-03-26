@@ -18,7 +18,7 @@ import com.techfun.altrua.ong.Ong;
  * @param email        E-mail institucional de contato
  * @param phone        Telefone ou WhatsApp de contato
  * @param category     Categoria de atuação (ex: Proteção Animal, Educação)
- * @param status       Status atual do registro (PENDING, APPROVED, REJECTED)
+ * @param status       Status atual do registro (valores possíveis: ATIVA, INATIVA)
  * @param logoUrl      URL da imagem de logotipo
  * @param bannerUrl    URL da imagem de capa ou banner promocional
  * @param donationInfo Informações e instruções sobre como realizar doações
