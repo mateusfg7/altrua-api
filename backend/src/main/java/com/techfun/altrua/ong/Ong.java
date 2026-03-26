@@ -21,8 +21,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,8 +78,6 @@ public class Ong {
     private String description;
 
     /** E-mail institucional para contato. */
-    @Email
-    @NotBlank
     @Column(nullable = false)
     private String email;
 

@@ -6,6 +6,10 @@ import java.util.UUID;
 
 import com.techfun.altrua.ong.Ong;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 /**
  * Objeto de Transferência de Dados (DTO) para representação detalhada de uma
  * ONG nas respostas da API.
@@ -18,7 +22,8 @@ import com.techfun.altrua.ong.Ong;
  * @param email        E-mail institucional de contato
  * @param phone        Telefone ou WhatsApp de contato
  * @param category     Categoria de atuação (ex: Proteção Animal, Educação)
- * @param status       Status atual do registro (valores possíveis: ATIVA, INATIVA)
+ * @param status       Status atual do registro (valores possíveis: ATIVA,
+ *                     INATIVA)
  * @param logoUrl      URL da imagem de logotipo
  * @param bannerUrl    URL da imagem de capa ou banner promocional
  * @param donationInfo Informações e instruções sobre como realizar doações
@@ -31,9 +36,9 @@ public record OngResponseDTO(
         UUID id,
         String name,
         String slug,
-        String cnpj,
+        @NotBlank(message = "CNPJ is required") @Pattern(regexp = "\\d{14}", message = "Invalid Format") String cnpj,
         String description,
-        String email,
+        @NotBlank(message = "Email is required") @Email String email,
         String phone,
         String category,
         String status,
