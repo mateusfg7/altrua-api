@@ -2,6 +2,7 @@ package com.techfun.altrua.common.util;
 
 import java.security.SecureRandom;
 import java.text.Normalizer;
+import java.util.Locale;
 
 /**
  * Classe utilitária para manipulação e geração de slugs amigáveis para URLs.
@@ -39,7 +40,7 @@ public final class SlugUtils {
     public static String normalize(String name) {
         return Normalizer.normalize(name, Normalizer.Form.NFD)
                 .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
-                .toLowerCase()
+                .toLowerCase(Locale.ROOT)
                 .strip()
                 .replaceAll("[^a-z0-9\\s-]", "")
                 .replaceAll("[\\s-]+", "-")
