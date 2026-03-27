@@ -6,10 +6,6 @@ import java.util.UUID;
 
 import com.techfun.altrua.ong.Ong;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-
 /**
  * Objeto de Transferência de Dados (DTO) para representação detalhada de uma
  * ONG nas respostas da API.
@@ -36,9 +32,9 @@ public record OngResponseDTO(
         UUID id,
         String name,
         String slug,
-        @NotBlank(message = "CNPJ is required") @Pattern(regexp = "\\d{14}", message = "Invalid Format") String cnpj,
+        String cnpj,
         String description,
-        @NotBlank(message = "Email is required") @Email String email,
+        String email,
         String phone,
         String category,
         String status,

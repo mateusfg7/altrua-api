@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 /**
  * Objeto de Transferência de Dados (DTO) para a requisição de registro de uma
@@ -28,18 +29,15 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record RegisterOngRequestDTO(
 
-                @NotBlank String name,
-
-                @NotBlank @Email String email,
-
-                @NotBlank String category,
-
-                String cnpj,
-                String description,
-                String phone,
-                String logoUrl,
-                String bannerUrl,
-                String donationInfo,
-                BigDecimal latitude,
-                BigDecimal longitude) {
+        @NotBlank(message = "Name is required") String name,
+        @NotBlank(message = "CNPJ is required") @Pattern(regexp = "\\d{14}", message = "Invalid Format") String cnpj,
+        @NotBlank(message = "Email is required") @Email String email,
+        @NotBlank(message = "Category is required") String category,
+        String description,
+        String phone,
+        String logoUrl,
+        String bannerUrl,
+        String donationInfo,
+        BigDecimal latitude,
+        BigDecimal longitude) {
 }
