@@ -1,5 +1,6 @@
 package com.techfun.altrua.ong;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import com.techfun.altrua.user.User;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Serviço responsável pela lógica de negócios relacionada às ONGs.
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
  * administradores.
  * </p>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OngService {
@@ -27,21 +30,18 @@ public class OngService {
     private final OngRepository ongRepository;
 
     /**
-     * Realiza o registro de uma nova ONG no sistema.
-     * 
+     * Registra uma nova ONG no sistema.
+     *
      * <p>
-     * O processo inclui:
-     * 1. Validação de CNPJ duplicado.
-     * 2. Geração e normalização de slug a partir do nome.
-     * 3. Tratamento de colisão de slugs com sufixos aleatórios.
-     * 4. Atribuição do usuário solicitante como administrador e criador.
+     * Valida duplicidade de CNPJ, gera um slug único a partir do nome e persiste
+     * a ONG com o usuário solicitante como administrador principal.
      * </p>
      *
-     * @param request dados da nova ONG vindos da requisição
-     * @param creator entidade do usuário que está criando a ONG
+     * @param request dados da ONG a ser cadastrada
+     * @param creator usuário responsável pelo cadastro, definido como administrador
      * @return a entidade {@link Ong} persistida
-     * @throws DuplicateResourceException se o CNPJ já existir ou se houver falha
-     *                                    de integridade ao salvar
+     * @throws DuplicateResourceException se o CNPJ já estiver cadastrado ou houver
+     *                                    conflito de unicidade ao persistir
      */
     @Transactional
     public Ong register(RegisterOngRequestDTO request, User creator) {
@@ -76,7 +76,14 @@ public class OngService {
             ong.addAdministrator(admin);
             return ongRepository.save(ong);
         } catch (DataIntegrityViolationException ex) {
-            throw new DuplicateResourceException("Erro ao cadastrar ONG.");
+            if (ex.getCause() instanceof ConstraintViolationException cve) {
+                log.warn("Conflito de unicidade ao cadastrar ONG. Constraint: {}", cve.getConstraintName());
+                throw new DuplicateResourceException(
+                        "Já existe uma ONG cadastrada com os dados fornecidos.");
+            }
+
+            log.error("Erro técnico inesperado ao cadastrar ONG", ex);
+            throw new RuntimeException("Não foi possível processar o cadastro da ONG no momento.");
         }
     }
 }
