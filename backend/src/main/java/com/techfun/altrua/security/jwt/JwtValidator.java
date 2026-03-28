@@ -3,14 +3,13 @@ package com.techfun.altrua.security.jwt;
 import java.util.Date;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Componente responsável pela validação de tokens JWT.
@@ -20,11 +19,10 @@ import lombok.RequiredArgsConstructor;
  * dos tokens recebidos nas requisições.
  * </p>
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtValidator {
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtValidator.class);
 
     private final JwtKeyProvider jwtKeyProvider;
 
@@ -32,18 +30,20 @@ public class JwtValidator {
      * Valida se o token pertence ao usuário informado e se não está expirado.
      *
      * <p>
-     * Compara o "subject" do token (nesta aplicação, o ID do usuário) com o username do {@link UserDetails}.
+     * Compara o "subject" do token (nesta aplicação, o ID do usuário) com o
+     * username do {@link UserDetails}.
      * </p>
      *
      * @param token       o token JWT a ser validado
-     * @param userDetails os detalhes do usuário contra os quais o token será validado
+     * @param userDetails os detalhes do usuário contra os quais o token será
+     *                    validado
      * @return {@code true} se o token for válido, {@code false} caso contrário
      */
     public boolean validateToken(String token, UserDetails userDetails) {
         // TO DO: implementação de um request-id futuramente e adicionar um logger aqui
         final String subject = extractSubject(token);
         if (subject == null) {
-            logger.warn("Token inválido: subject ausente ou nulo");
+            log.warn("Token inválido: subject ausente ou nulo");
             return false;
         }
         return subject.equals(userDetails.getUsername()) && !isTokenExpired(token);
@@ -79,6 +79,26 @@ public class JwtValidator {
      */
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    /**
+     * Verifica se o claim "tokenType" do JWT é igual a "access".
+     * 
+     * @param token String do JWT a ser analisada.
+     * @return true se o tipo for "access"; false caso contrário.
+     */
+    public boolean isAccessToken(String token) {
+        return "access".equals(extractClaim(token, claims -> claims.get("tokenType")));
+    }
+
+    /**
+     * Verifica se o claim "tokenType" do JWT é igual a "refresh".
+     * 
+     * @param token String do JWT a ser analisada.
+     * @return true se o tipo for "refresh"; false caso contrário.
+     */
+    public boolean isRefreshToken(String token) {
+        return "refresh".equals(extractClaim(token, claims -> claims.get("tokenType")));
     }
 
     /**
