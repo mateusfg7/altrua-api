@@ -2,10 +2,15 @@ package com.techfun.altrua.ong;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.techfun.altrua.common.exceptions.DuplicateResourceException;
 import com.techfun.altrua.common.util.SlugUtils;
+import com.techfun.altrua.ong.dto.OngFilterDTO;
+import com.techfun.altrua.ong.dto.OngResponseDTO;
 import com.techfun.altrua.ong.dto.RegisterOngRequestDTO;
 import com.techfun.altrua.user.User;
 
@@ -85,5 +90,27 @@ public class OngService {
             log.error("Erro técnico inesperado ao cadastrar ONG", ex);
             throw new RuntimeException("Não foi possível processar o cadastro da ONG no momento.");
         }
+    }
+
+    /**
+     * Recupera uma página de ONGs filtradas de acordo com os critérios fornecidos.
+     * <p>
+     * O processo executa três etapas:
+     * 1. Constrói a especificação dinâmica via {@link OngSpecification}.
+     * 2. Consulta o banco de dados aplicando filtros e metadados de paginação.
+     * 3. Converte o resultado da entidade {@link Ong} para {@link OngResponseDTO}.
+     * </p>
+     *
+     * @param filter   Objeto contendo os critérios de busca (nome, slug, etc.).
+     * @param pageable Configurações de paginação (página atual, tamanho,
+     *                 ordenação).
+     * @return Uma página de {@link OngResponseDTO} contendo os registros
+     *         encontrados.
+     * @throws org.springframework.dao.DataAccessException em caso de erro na
+     *                                                     persistência.
+     */
+    public Page<OngResponseDTO> listOngs(OngFilterDTO filter, Pageable pageable) {
+        Specification<Ong> spec = OngSpecification.withFilter(filter);
+        return ongRepository.findAll(spec, pageable).map(OngResponseDTO::fromEntity);
     }
 }
