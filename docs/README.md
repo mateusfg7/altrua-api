@@ -194,7 +194,3 @@ A API REST está em desenvolvimento. A documentação dos endpoints será adicio
 ## 📄 Licença
 
 Este projeto está sob a licença [GPL-3.0](LICENSE).
-
----
-
-<p align="center">Feito com ❤️ para o Projeto Integrador FAPAM</p>
