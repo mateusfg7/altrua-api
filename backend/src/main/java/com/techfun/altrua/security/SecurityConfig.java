@@ -61,7 +61,9 @@ public class SecurityConfig {
                                 "/api-docs/**",
                                 "/docs/**",
                                 "/swagger-ui/**",
-                                "/auth/**")
+                                "/auth/signin",
+                                "/auth/login",
+                                "/auth/refresh")
                         .permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
