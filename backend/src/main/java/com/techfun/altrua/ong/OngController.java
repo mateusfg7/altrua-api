@@ -1,13 +1,18 @@
 package com.techfun.altrua.ong;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.techfun.altrua.ong.dto.OngFilterDTO;
 import com.techfun.altrua.ong.dto.OngResponseDTO;
 import com.techfun.altrua.ong.dto.RegisterOngRequestDTO;
 import com.techfun.altrua.security.userdetails.UserPrincipal;
@@ -52,4 +57,25 @@ public class OngController {
         return ResponseEntity.status(HttpStatus.CREATED).body(OngResponseDTO.fromEntity(savedOng));
     }
 
+    /**
+     * Endpoint para listagem paginada de ONGs com suporte a filtros dinâmicos.
+     * <p>
+     * O Spring realiza o bind automático dos parâmetros da query string para o
+     * objeto
+     * {@link OngFilterDTO}. Caso nenhum parâmetro seja enviado, o objeto é
+     * instanciado
+     * com campos nulos, resultando em uma listagem completa.
+     * </p>
+     *
+     * @param filter   Objeto contendo os critérios de filtragem (extraídos da URL).
+     * @param pageable Configurações de paginação e ordenação (padrão: 10 registros
+     *                 por página).
+     * @return {@link ResponseEntity} contendo a página de {@link OngResponseDTO}.
+     */
+    @GetMapping
+    public ResponseEntity<Page<OngResponseDTO>> list(
+            OngFilterDTO filter,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(ongService.listOngs(filter, pageable));
+    }
 }
